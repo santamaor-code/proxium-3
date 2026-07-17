@@ -1,0 +1,16 @@
+:root {
+  --color-sage: #7fa79c;
+  --color-sage-dark: #4c6f65;
+  --color-charcoal: #2b2b2b;
+  --color-charcoal-soft: #5f5e5a;
+  --color-stone-bg: #faf9f7;
+  --color-stone-line: #d3d1c7;
+  --color-terracotta: #d96b41;
+  --color-terracotta-dark: #b0532f;
+
+  --font-display: var(--font-display, Georgia, serif);
+  --font-body: var(--font-body, -apple-system, Helvetica, Arial, sans-serif);
+
+  --radius-card: 12px;
+  --max-width-content: 1120px;
+}
