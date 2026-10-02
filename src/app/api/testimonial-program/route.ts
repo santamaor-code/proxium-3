@@ -12,7 +12,7 @@ const FROM_ADDRESS =
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { fullName, phone, email, message, consent } = body;
+    const { fullName, phone, message, consent } = body;
 
     if (!consent) {
       return NextResponse.json(
@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
         <h2>Nueva solicitud - Programa de testimonios con descuento</h2>
         <p><strong>Nombre:</strong> ${fullName}</p>
         <p><strong>Teléfono:</strong> ${phone}</p>
-        <p><strong>Correo:</strong> ${email}</p>
         <p><strong>Mensaje:</strong> ${message || "(sin mensaje)"}</p>
         <p><strong>Autorizó publicación:</strong> Sí</p>
       `,

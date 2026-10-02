@@ -150,6 +150,56 @@ export default function CountryHomePage({
         </Container>
       </section>
 
+      {/* Pricing - Proxium (men) / Proxil (women), one-time price each */}
+      <section className="py-20">
+        <Container>
+          <SectionHeading
+            eyebrow={content.pricing.eyebrow}
+            title={content.pricing.title}
+          />
+          <p className="mt-4 max-w-xl text-sm text-charcoal-soft md:text-base">
+            {content.pricing.subtitle}
+          </p>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {content.pricing.products.map((product) => (
+              <div
+                key={product.name}
+                className="rounded-card border border-charcoal/10 bg-stone-100 p-8"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-sage-600">
+                  {product.audience}
+                </p>
+                <h3 className="mt-2 font-display text-2xl font-medium text-charcoal">
+                  {product.name}
+                </h3>
+                <p className="mt-4 text-sm text-charcoal-soft">
+                  {product.description}
+                </p>
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="font-display text-3xl font-medium text-charcoal">
+                    {product.price}
+                  </span>
+                  <span className="text-xs text-charcoal-soft">
+                    {product.priceNote}
+                  </span>
+                </div>
+                <Button
+                  href={`/${country.code}/evaluacion`}
+                  className="mt-6 w-full"
+                >
+                  Comenzar evaluación
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 text-xs text-charcoal-soft/70">
+            {content.pricing.disclaimer}
+          </p>
+        </Container>
+      </section>
+
       {/* Trust / credibility */}
       <section className="bg-stone-100 py-20">
         <Container className="grid gap-10 md:grid-cols-2 md:items-start">

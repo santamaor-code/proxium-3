@@ -17,7 +17,15 @@ export function Footer({ country }: { country: CountryConfig }) {
 
         <div className="text-sm text-charcoal-soft">
           <p>{country.clinic.phone}</p>
-          <p>{country.clinic.email}</p>
+          <a
+            href={`https://wa.me/${country.clinic.whatsapp.replace(/[^\d]/g, "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 block hover:text-charcoal"
+          >
+            WhatsApp: {country.clinic.whatsapp}
+          </a>
+          <p className="mt-1">{country.clinic.email}</p>
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-charcoal-soft">
@@ -43,8 +51,10 @@ export function Footer({ country }: { country: CountryConfig }) {
       </Container>
 
       <div className="border-t border-charcoal/10 py-6 text-center text-xs text-charcoal-soft">
-        © {new Date().getFullYear()} {country.clinic.legalName}. Todos los
-        derechos reservados.
+        © {new Date().getFullYear()} {country.operator.legalName}, cédula
+        jurídica {country.operator.cedulaJuridica}. Evaluación y tratamiento
+        a cargo de {country.clinic.legalName}, cédula jurídica{" "}
+        {country.clinic.cedulaJuridica}. Todos los derechos reservados.
       </div>
     </footer>
   );

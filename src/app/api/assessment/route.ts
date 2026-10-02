@@ -10,9 +10,24 @@ export async function POST(request: NextRequest) {
     const countryCode = String(formData.get("country") ?? "cr");
     const fullName = String(formData.get("fullName") ?? "");
     const phone = String(formData.get("phone") ?? "");
-    const idNumber = String(formData.get("idNumber") ?? "");
+    const consent = String(formData.get("consent") ?? "no");
+    const consentVersion = String(formData.get("consentVersion") ?? "");
+    const ageStatus = String(formData.get("ageStatus") ?? "");
+    const guardianName = String(formData.get("guardianName") ?? "");
+    const guardianPhone = String(formData.get("guardianPhone") ?? "");
+    const guardianConsent = String(formData.get("guardianConsent") ?? "no");
     const answersRaw = String(formData.get("answers") ?? "{}");
     const answers: Record<string, string> = JSON.parse(answersRaw);
+
+    if (consent !== "yes") {
+      return NextResponse.json({ error: "Consentimiento requerido" }, { status: 400 });
+    }
+    // Recorded server-side, at the moment the submission is received,
+    // rather than trusting a client-supplied timestamp.
+    const consentTimestamp = new Date().toISOString();
+    if (ageStatus === "minor" && (!guardianName || !guardianPhone || guardianConsent !== "yes")) {
+      return NextResponse.json({ error: "Autorización del representante requerida" }, { status: 400 });
+    }
 
     const country = getCountry(countryCode);
     const content = getAssessmentContent(countryCode);
@@ -49,8 +64,13 @@ export async function POST(request: NextRequest) {
     await syncLeadToHubSpot({
       fullName,
       phone,
-      idNumber,
       answersHtml,
+      consentVersion,
+      consentTimestamp,
+      ageStatus,
+      guardianName,
+      guardianPhone,
+      guardianConsent,
       photos,
     });
 

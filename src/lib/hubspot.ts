@@ -8,7 +8,12 @@ interface LeadPhoto {
 interface LeadData {
   fullName: string;
   phone: string;
-  idNumber: string;
+  consentVersion: string;
+  consentTimestamp: string;
+  ageStatus: string;
+  guardianName: string;
+  guardianPhone: string;
+  guardianConsent: string;
   answersHtml: string;
   photos: LeadPhoto[];
 }
@@ -84,10 +89,55 @@ async function findContactByPhone(phone: string): Promise<string | null> {
   return data.results?.[0]?.id ?? null;
 }
 
+async function findOwnerIdByEmail(email: string): Promise<string | null> {
+  const res = await fetch(
+    `${HUBSPOT_API_BASE}/crm/v3/owners?email=${encodeURIComponent(email)}`,
+    { headers: hubspotAuthHeader() }
+  );
+  if (!res.ok) {
+    console.error(
+      `HubSpot owner lookup HTTP ${res.status} for email "${email}":`,
+      await res.text()
+    );
+    return null;
+  }
+  const data = await res.json();
+  const ownerId = data.results?.[0]?.id ?? null;
+  if (!ownerId) {
+    console.error(
+      `HubSpot owner lookup found no matching owner for email "${email}". Raw response:`,
+      JSON.stringify(data)
+    );
+  }
+  return ownerId;
+}
+
 async function createOrUpdateContact(lead: LeadData): Promise<string> {
   const existingId = await findContactByPhone(lead.phone);
   const { firstname, lastname } = splitName(lead.fullName);
-  const properties = { firstname, lastname, phone: lead.phone };
+  const properties: Record<string, string> = {
+    firstname,
+    lastname,
+    phone: lead.phone,
+  };
+
+  // Auto-assign the contact owner, if configured. Failure here (bad
+  // email, missing scope) shouldn't block the whole submission - the
+  // contact is still worth creating even if unassigned.
+  const ownerEmail = process.env.HUBSPOT_OWNER_EMAIL;
+  if (ownerEmail) {
+    try {
+      const ownerId = await findOwnerIdByEmail(ownerEmail);
+      if (ownerId) {
+        properties.hubspot_owner_id = ownerId;
+        console.log(`Assigned contact to owner ID ${ownerId}`);
+      }
+    } catch (err) {
+      console.error("HubSpot owner lookup threw an exception:", err);
+    }
+  } else {
+    console.log("HUBSPOT_OWNER_EMAIL is not set - skipping auto-assignment.");
+  }
 
   if (existingId) {
     await fetch(`${HUBSPOT_API_BASE}/crm/v3/objects/contacts/${existingId}`, {
@@ -126,7 +176,9 @@ async function attachNote(contactId: string, lead: LeadData) {
 
   const noteBody = `
     <p><strong>Nueva evaluación completada</strong></p>
-    <p>Cédula/Pasaporte: ${lead.idNumber}</p>
+    <p>Consentimiento evaluación: Sí · versión ${lead.consentVersion} · ${lead.consentTimestamp}</p>
+    <p>Edad declarada: ${lead.ageStatus === "minor" ? "Menor de 18" : "18 o más"}</p>
+    ${lead.ageStatus === "minor" ? `<p>Representante legal: ${lead.guardianName} · ${lead.guardianPhone} · autorización: ${lead.guardianConsent === "yes" ? "Sí" : "No"}</p>` : ""}
     ${lead.answersHtml}
     <p>Fotos: ${photoLinks.length ? photoLinks.join(" · ") : "ninguna"}</p>
   `;

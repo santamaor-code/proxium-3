@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AssessmentContent } from "@/content/types";
 import { Container } from "@/components/ui/Container";
 import { TextField } from "@/components/ui/TextField";
@@ -10,16 +11,19 @@ import { Button } from "@/components/ui/Button";
 import { PhotoZoneCard } from "@/components/assessment/PhotoZoneCard";
 import { compressImage } from "@/lib/compressImage";
 
+// Bump this whenever the consent wording or the linked legal pages change
+// materially, so every submission records exactly which version the
+// person agreed to.
+const CONSENT_VERSION = "2026-10-02-v1";
+
 export interface IdentityFormData {
   fullName: string;
   phone: string;
-  idNumber: string;
 }
 
 const emptyIdentity: IdentityFormData = {
   fullName: "",
   phone: "",
-  idNumber: "",
 };
 
 type Stage = "identity" | "questions" | "photos" | "done";
@@ -73,12 +77,19 @@ export function AssessmentWizard({
   );
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [ageStatus, setAgeStatus] = useState<"adult" | "minor" | "">("");
+  const [guardianName, setGuardianName] = useState("");
+  const [guardianPhone, setGuardianPhone] = useState("");
+  const [guardianConsent, setGuardianConsent] = useState(false);
 
   const { identityStep, questions, photoStep } = content;
   const currentQuestion = questions[questionIndex];
 
   function handleIdentitySubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!ageStatus) return;
+    if (ageStatus === "minor" && (!guardianName || !guardianPhone || !guardianConsent)) return;
     setStage("questions");
   }
 
@@ -125,7 +136,14 @@ export function AssessmentWizard({
       formData.set("country", countryCode);
       formData.set("fullName", identity.fullName);
       formData.set("phone", identity.phone);
-      formData.set("idNumber", identity.idNumber);
+      formData.set("consent", consent ? "yes" : "no");
+      formData.set("consentVersion", CONSENT_VERSION);
+      formData.set("ageStatus", ageStatus);
+      if (ageStatus === "minor") {
+        formData.set("guardianName", guardianName);
+        formData.set("guardianPhone", guardianPhone);
+        formData.set("guardianConsent", guardianConsent ? "yes" : "no");
+      }
       formData.set("answers", JSON.stringify(answers));
       Object.entries(photos).forEach(([zoneId, file]) => {
         formData.set(`photo_${zoneId}`, file);
@@ -185,6 +203,34 @@ export function AssessmentWizard({
               />
             ))}
 
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal">
+              ¿Tienes 18 años o más?
+              <select
+                value={ageStatus}
+                onChange={(e) => setAgeStatus(e.target.value as "adult" | "minor" | "")}
+                required
+                className="rounded-card border border-charcoal/15 bg-stone-50 px-4 py-3 text-sm"
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="adult">Sí</option>
+                <option value="minor">No</option>
+              </select>
+            </label>
+
+            {ageStatus === "minor" && (
+              <div className="flex flex-col gap-4 rounded-card border border-charcoal/10 p-4">
+                <p className="text-xs text-charcoal-soft">
+                  Para continuar con la evaluación de una persona menor de edad, necesitamos la intervención y autorización de su padre, madre o representante legal.
+                </p>
+                <TextField name="guardianName" label="Nombre del padre, madre o representante legal" placeholder="Nombre y apellidos" type="text" value={guardianName} onChange={setGuardianName} />
+                <TextField name="guardianPhone" label="Teléfono / WhatsApp del representante" placeholder="8888 8888" type="tel" value={guardianPhone} onChange={setGuardianPhone} />
+                <label className="flex items-start gap-3 text-xs text-charcoal-soft">
+                  <input type="checkbox" checked={guardianConsent} onChange={(e) => setGuardianConsent(e.target.checked)} required />
+                  <span>Declaro que soy el padre, madre o representante legal de la persona menor de edad y autorizo el envío de su información para esta evaluación inicial. Entiendo que cualquier consulta, prescripción o tratamiento requerirá las autorizaciones adicionales que correspondan.</span>
+                </label>
+              </div>
+            )}
+
             <Button variant="primary" className="mt-2 w-full">
               {identityStep.cta}
             </Button>
@@ -200,7 +246,7 @@ export function AssessmentWizard({
 
   if (stage === "photos") {
     const capturedCount = Object.keys(photos).length;
-    const canContinue = capturedCount >= photoStep.minRequired;
+    const canContinue = capturedCount >= photoStep.minRequired && consent;
 
     return (
       <section className="py-16 md:py-24">
@@ -231,6 +277,41 @@ export function AssessmentWizard({
             {photoStep.helperNote}
           </p>
 
+          <label className="mt-6 flex items-start gap-3 text-xs text-charcoal-soft">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              Autorizo el tratamiento de la información y fotografías que
+              proporciono para gestionar mi solicitud de evaluación capilar.
+              Entiendo que esta información podrá compartirse con BioH y/o
+              con un médico debidamente autorizado en Costa Rica para
+              evaluar mi caso y contactarme por teléfono o WhatsApp. He
+              leído y acepto el{" "}
+              <Link
+                href={`/${countryCode}/privacidad`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-charcoal"
+              >
+                Aviso de Privacidad
+              </Link>{" "}
+              y los{" "}
+              <Link
+                href={`/${countryCode}/terminos`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-charcoal"
+              >
+                Términos y Condiciones
+              </Link>
+              .
+            </span>
+          </label>
+
           {submitError && (
             <p className="mt-4 text-sm text-red-600">{submitError}</p>
           )}
@@ -257,7 +338,7 @@ export function AssessmentWizard({
           </h1>
           <p className="mt-3 text-sm text-charcoal-soft">
             Un médico de BioH revisará tu caso. Te contactaremos por
-            teléfono o correo para coordinar los siguientes pasos.
+            teléfono o WhatsApp para coordinar los siguientes pasos.
           </p>
         </Container>
       </section>

@@ -13,10 +13,18 @@ export interface CountryConfig {
   clinic: {
     name: string;
     legalName: string;
+    cedulaJuridica: string;
     address: string;
     phone: string;
     whatsapp: string;
     email: string;
+  };
+  // The company that operates this website and handles/transmits
+  // submissions - legally distinct from the clinic above, which performs
+  // the actual medical evaluation. Named explicitly in the legal pages.
+  operator: {
+    legalName: string;
+    cedulaJuridica: string;
   };
   seo: {
     defaultTitle: string;
@@ -33,12 +41,17 @@ export const countries: Record<CountryCode, CountryConfig> = {
     currency: "CRC",
     clinic: {
       name: "BioH",
-      legalName: "BioH Costa Rica",
+      legalName: "Salud en Equilibrio (BioH)",
+      cedulaJuridica: "3-101-694978",
       address: "Barrio Francisco Peralta, San José, Costa Rica",
-      // Placeholder contact details — replace with confirmed values before launch.
-      phone: "+506 0000 0000",
-      whatsapp: "+506 0000 0000",
+      // Email pending - phone/WhatsApp confirmed real as of Jul 2026.
+      phone: "+506 2280 5058",
+      whatsapp: "+506 8828 8091",
       email: "contacto@bioh.cr",
+    },
+    operator: {
+      legalName: "Sociedad de Responsabilidad Limitada",
+      cedulaJuridica: "3-102-954118",
     },
     seo: {
       defaultTitle: "BioH | Tratamiento para la caída del cabello en Costa Rica",

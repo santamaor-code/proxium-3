@@ -91,6 +91,19 @@ export interface HomeContent {
     };
     disclaimer: string;
   };
+  pricing: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    products: {
+      name: string;
+      audience: string;
+      price: string;
+      priceNote: string;
+      description: string;
+    }[];
+    disclaimer: string;
+  };
   trust: {
     eyebrow: string;
     title: string;
@@ -102,4 +115,29 @@ export interface HomeContent {
     body: string;
     cta: string;
   };
+}
+
+// Legal pages (Términos, Aviso de Privacidad, Aviso Médico).
+// Set draftNotice on a LegalPageContent to show a "pending review" banner
+// at the top of that page; leave it unset once the content is final.
+export interface LegalSection {
+  heading: string;
+  // Each entry in body is either a paragraph (string) or a bulleted list.
+  body: (string | { list: string[] })[];
+}
+
+export interface LegalPageContent {
+  title: string;
+  lastUpdated: string;
+  // Optional: when set, the page shows a draft/pending-review banner with
+  // this text. Leave unset once the content is considered final.
+  draftNotice?: string;
+  intro?: string;
+  sections: LegalSection[];
+}
+
+export interface LegalContent {
+  terms: LegalPageContent;
+  privacy: LegalPageContent;
+  medicalDisclaimer: LegalPageContent;
 }

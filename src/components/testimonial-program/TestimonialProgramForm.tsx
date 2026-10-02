@@ -10,7 +10,7 @@ export function TestimonialProgramForm({
 }: {
   content: TestimonialProgramContent;
 }) {
-  const [fields, setFields] = useState({ fullName: "", phone: "", email: "" });
+  const [fields, setFields] = useState({ fullName: "", phone: "" });
   const [message, setMessage] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">(

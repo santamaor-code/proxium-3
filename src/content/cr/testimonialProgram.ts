@@ -1,62 +1,35 @@
 import { TestimonialProgramContent } from "../types";
 
 export const testimonialProgramContentCR: TestimonialProgramContent = {
-  eyebrow: "Programa de testimonios BioH",
+  eyebrow: "Programa opcional de testimonios BioH",
   title: "Comparte tu resultado, recibe un descuento",
   subtitle:
-    "Si tu tratamiento con BioH te dio buenos resultados, nos encantaría compartir tu historia — y agradecerte con un descuento en tu próxima compra.",
+    "Si ya eres paciente y quieres compartir voluntariamente tu experiencia, puedes autorizar el uso de tu testimonio y/o fotografías a cambio del beneficio indicado por BioH.",
   howItWorks: [
-    {
-      title: "1. Completa este formulario",
-      body: "Después de tu evaluación de seguimiento con BioH.",
-    },
-    {
-      title: "2. Te contactamos",
-      body: "Un asesor de BioH confirma los detalles contigo.",
-    },
-    {
-      title: "3. Compartes tu resultado",
-      body: "Fotos de antes/después y tu testimonio, con tu autorización.",
-    },
-    {
-      title: "4. Recibes tu descuento",
-      body: "Se aplica una vez publicado tu testimonio.",
-    },
+    { title: "1. Envías tu solicitud", body: "El programa es independiente de tu evaluación y tratamiento médico." },
+    { title: "2. BioH te contacta", body: "Se confirma contigo qué material deseas compartir y cómo podrá utilizarse." },
+    { title: "3. Autorizas el contenido", body: "Solo se utilizarán el testimonio, resultados y/o fotografías que autorices expresamente." },
+    { title: "4. Recibes el beneficio", body: "El descuento o beneficio se aplica según las condiciones confirmadas por BioH." },
   ],
   requirements: [
-    "Debes ser paciente activo de BioH con al menos una evaluación de seguimiento.",
-    "Tus resultados y/o fotos podrán publicarse en el sitio web y redes sociales de BioH.",
-    "El descuento se aplica sobre tu próxima compra de tratamiento, sujeto a confirmación de BioH.",
+    "La participación es totalmente voluntaria y no afecta tu evaluación, tratamiento ni atención médica.",
+    "Puedes decidir qué fotografías, testimonio o resultados autorizas a publicar.",
+    "La autorización de marketing es independiente del consentimiento utilizado para tu evaluación médica.",
+    "Cuando corresponda, el contenido publicado podrá identificarse como testimonio incentivado.",
   ],
   consentLabel:
-    "Autorizo a BioH a publicar mis resultados y/o fotos en su sitio web y redes sociales.",
+    "Autorizo voluntariamente a BioH a contactarme sobre este programa y, una vez acordado el material específico, a utilizar el testimonio, resultados y/o fotografías que yo apruebe para fines promocionales. Entiendo que esta autorización es independiente de mi atención médica.",
   form: {
     fields: [
-      {
-        name: "fullName",
-        label: "Nombre completo",
-        placeholder: "Nombre y apellidos",
-        type: "text",
-      },
-      {
-        name: "phone",
-        label: "Teléfono celular",
-        placeholder: "8888 8888",
-        type: "tel",
-      },
-      {
-        name: "email",
-        label: "Correo electrónico",
-        placeholder: "tucorreo@ejemplo.com",
-        type: "email",
-      },
+      { name: "fullName", label: "Nombre completo", placeholder: "Nombre y apellidos", type: "text" },
+      { name: "phone", label: "Teléfono celular / WhatsApp", placeholder: "8888 8888", type: "tel" },
     ],
     messageLabel: "Cuéntanos brevemente tu experiencia (opcional)",
     messagePlaceholder: "¿Qué resultados has notado con tu tratamiento?",
     cta: "Enviar solicitud",
   },
   disclosureNote:
-    "Los testimonios publicados a través de este programa se identifican como incentivados, en línea con buenas prácticas de transparencia publicitaria.",
+    "Si un testimonio publicado está asociado a un descuento u otro beneficio, podrá indicarse como contenido incentivado.",
   disclaimer:
-    "Los resultados individuales pueden variar. La aprobación del descuento queda sujeta a revisión de BioH.",
+    "Los resultados individuales pueden variar. Participar o no participar en este programa no afecta tu atención médica.",
 };

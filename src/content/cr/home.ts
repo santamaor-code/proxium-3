@@ -73,6 +73,32 @@ export const homeContentCR: HomeContent = {
     disclaimer:
       "Resultados de estudios clínicos del fabricante del tratamiento. BioH es el proveedor médico autorizado de este tratamiento en Costa Rica. Los resultados individuales pueden variar.",
   },
+  pricing: {
+    eyebrow: "Precios",
+    title: "Un tratamiento, un precio claro",
+    subtitle:
+      "Sin suscripciones ni letra pequeña. El precio final se confirma con tu médico según tu evaluación.",
+    products: [
+      {
+        name: "Proxium",
+        audience: "Para hombres",
+        price: "₡35,000",
+        priceNote: "precio único",
+        description:
+          "Tratamiento formulado para la caída de cabello masculina, bajo supervisión médica de BioH.",
+      },
+      {
+        name: "Proxil",
+        audience: "Para mujeres",
+        price: "₡35,000",
+        priceNote: "precio único",
+        description:
+          "Tratamiento formulado para la caída de cabello femenina, bajo supervisión médica de BioH.",
+      },
+    ],
+    disclaimer:
+      "Precio sujeto a confirmación médica según tu evaluación. No incluye consulta si se requiere de forma presencial.",
+  },
   trust: {
     eyebrow: "Por qué BioH",
     title: "Medicina funcional, no una fórmula genérica",
